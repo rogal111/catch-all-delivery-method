@@ -6,7 +6,7 @@ class CatchAllDeliveryMethod < ::Mail::SMTP
     def initialize(values)
       super(values)
       self.settings[:whitelist]||=[]
-      raise 'Setup :recipient_email in config.action_mailer.smtp_settings !' if settings[:recipient_email].blank?
+      raise 'Setup :recipient_email in config.action_mailer.catch_all_settings !' if settings[:recipient_email].blank?
     end
     
     # Send the message via SMTP, changing all destinations emails to catch-all recipient_email
