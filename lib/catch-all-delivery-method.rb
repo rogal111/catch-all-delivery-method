@@ -7,13 +7,14 @@ class CatchAllDeliveryMethod < ::Mail::SMTP
       super(values)
       self.settings[:whitelist]||=[]
       raise 'Setup :recipient_email in config.action_mailer.catch_all_settings !' if settings[:recipient_email].blank?
+      self.settings[:recipient_email]=[self.settings[:recipient_email]] unless self.settings[:recipient_email].is_a?(Array)
     end
     
     # Send the message via SMTP, changing all destinations emails to catch-all recipient_email
     # optional setting: whitelist -> array off allowed emails
     def deliver!(mail)
       allowed_emails=Proc.new {|a| settings[:whitelist].include?(a) }
-      mail.to=mail.to_addrs.select(&allowed_emails)<<settings[:recipient_email]
+      mail.to=mail.to_addrs.select(&allowed_emails)+settings[:recipient_email]
       mail.bcc=mail.bcc_addrs.select(&allowed_emails)
       mail.cc=mail.cc_addrs.select(&allowed_emails)
       super(mail)
